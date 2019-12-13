@@ -169,6 +169,8 @@ class ItemUpdater : public ItemUpdaterInherit
     /** @brief Persistent ObjectEnable D-Bus object */
     std::unique_ptr<ObjectEnable> volatileEnable;
 
+    virtual void createHostFwPartition() = 0;
+
   protected:
     /** @brief Callback function for Software.Version match.
      *  @details Creates an Activation D-Bus object.

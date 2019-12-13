@@ -62,6 +62,8 @@ class ItemUpdaterUbi : public ItemUpdater
      */
     static std::string determineId(const std::string& symlinkPath);
 
+    void createHostFwPartition() override;
+
   private:
     std::unique_ptr<Activation> createActivationObject(
         const std::string& path, const std::string& versionId,
