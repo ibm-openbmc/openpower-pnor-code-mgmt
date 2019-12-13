@@ -423,6 +423,17 @@ void GardResetUbi::reset()
     utils::hiomapdResume(bus);
 }
 
+void ItemUpdaterUbi::createHostFwPartition()
+{
+    auto serviceFile = "obmc-flash-bios-ubipatch.service";
+
+    // Remove the read-only partitions.
+    auto method = bus.new_method_call(SYSTEMD_BUSNAME, SYSTEMD_PATH,
+                                      SYSTEMD_INTERFACE, "StartUnit");
+    method.append(serviceFile, "replace");
+    bus.call_noreply(method);
+}
+
 } // namespace updater
 } // namespace software
 } // namespace openpower
