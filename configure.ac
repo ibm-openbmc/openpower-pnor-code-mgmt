@@ -167,6 +167,8 @@ AC_DEFINE(PNOR_RW_ACTIVE_PATH, "/var/lib/phosphor-software-manager/pnor/rw",
     [Path to the active read-write pnor partitions])
 AC_DEFINE(PNOR_PRSV_ACTIVE_PATH, "/var/lib/phosphor-software-manager/pnor/prsv",
     [Path to the active preserved pnor partitions])
+AC_DEFINE(HOST_FW_SQUASHFS_PATH, "/usr/local/share/host-fw-squashfs",
+    [Path to host-fw patches])
 
 # Setup ubifs layout support
 # For now make it default enabled
