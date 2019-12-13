@@ -55,9 +55,7 @@ attach_ubi() {
 mount_squashfs() {
   pnormtd="$(findmtd pnor)"
   ubidev="/dev/ubi${pnormtd#mtd}"
-  mountdir="/media/${name}"
   vol="$(findubi "${name}")"
-  img="/tmp/images/${version}/pnor.xz.squashfs"
   filesize="$(ls -sh $img | awk -F " " {'print $1'})"
 
   if is_mounted "${name}"; then
@@ -148,7 +146,6 @@ umount_ubi() {
   pnormtd="$(findmtd pnor)"
   pnor="${pnormtd#mtd}"
   ubidev="/dev/ubi${pnor}"
-  mountdir="/media/${name}"
 
   if is_mounted "${name}"; then
     umount "${mountdir}"
@@ -192,17 +189,19 @@ remount_ubi() {
 
     if [[ ${name} == pnor-prsv ]] || [[ ${name} == pnor-rw* ]] || [[ ${name} == pnor-ro* ]]; then
       mountdir="/media/${name}"
-      if [ ! -d "${mountdir}" ]; then
-        mkdir -p "${mountdir}"
-      fi
+    elif [[ ${name} == host-fw ]]; then
+      mountdir="/usr/local/share/${name}"
+    fi
+    if [ ! -d "${mountdir}" ]; then
+      mkdir -p "${mountdir}"
+    fi
 
-      if [[ ${name} == pnor-ro* ]]
-      then
-        ubiblock --create /dev/ubi${pnor}_${element}
-        mount -t squashfs -o ro "/dev/ubiblock${pnor}_${element}" "${mountdir}"
-      else
-        mount -t ubifs "ubi${pnor}:${name}" "${mountdir}"
-      fi
+    if [[ ${name} == pnor-ro* ]] || [[ ${name} == host-fw ]]
+    then
+      ubiblock --create /dev/ubi${pnor}_${element}
+      mount -t squashfs -o ro "/dev/ubiblock${pnor}_${element}" "${mountdir}"
+    elif [[ ${name} == pnor-prsv ]] || [[ ${name} == pnor-rw* ]]; then
+      mount -t ubifs "ubi${pnor}:${name}" "${mountdir}"
     fi
   done
 }
@@ -224,6 +223,7 @@ ubi_cleanup() {
 
     for (( index=0; index<${#vols[@]}; index++ )); do
          name=${vols[index]}
+         mountdir="/media/${name}"
          umount_ubi
     done
 }
@@ -269,7 +269,19 @@ case "$1" in
   squashfsmount)
     name="$2"
     version="$3"
+    mountdir="/media/${name}"
+    img="/tmp/images/${version}/pnor.xz.squashfs"
     mount_squashfs
+    ;;
+  hostfwsquashfsmount)
+    name="$2"
+    mountdir="/usr/local/share/host-fw"
+    img="/usr/local/share/host-fw-squashfs/lids.squashfs"
+    if [ -e "${img}" ]; then
+      umount_ubi
+      mount_squashfs
+      rm "${img}"
+    fi
     ;;
   ubimount)
     name="$2"
@@ -277,6 +289,12 @@ case "$1" in
     ;;
   ubiumount)
     name="$2"
+    mountdir="/media/${name}"
+    umount_ubi
+    ;;
+  hostfwumount)
+    name="$2"
+    mountdir="/usr/local/share/host-fw"
     umount_ubi
     ;;
   ubiremount)

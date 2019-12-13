@@ -7,6 +7,7 @@ OnFailure=obmc-flash-bios-ubiumount-ro@%i.service obmc-flash-bios-ubiumount-rw@%
 [Service]
 Type=oneshot
 RemainAfterExit=no
+ExecStart=/usr/bin/obmc-flash-bios hostfwumount host-fw
 ExecStart=/usr/bin/obmc-flash-bios squashfsmount pnor-ro-%i %i
 ExecStart=/usr/bin/obmc-flash-bios ubimount pnor-rw-%i
 ExecStart=/usr/bin/obmc-flash-bios ubimount pnor-prsv
