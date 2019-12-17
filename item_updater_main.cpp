@@ -1,6 +1,7 @@
 #include "config.h"
 
 #ifdef UBIFS_LAYOUT
+#include "ubi/host_fw_watch.hpp"
 #include "ubi/item_updater_ubi.hpp"
 #include "ubi/watch.hpp"
 #else
@@ -44,6 +45,9 @@ int main(int argc, char* argv[])
             loop,
             std::bind(std::mem_fn(&ItemUpdater::updateFunctionalAssociation),
                       &updater, std::placeholders::_1));
+        openpower::software::updater::HostFwWatch hostFwWatch(
+            loop, std::bind(std::mem_fn(&ItemUpdater::createHostFwPartition),
+                            &updater));
 #endif
         bus.attach_event(loop, SD_EVENT_PRIORITY_NORMAL);
         rc = sd_event_loop(loop);
