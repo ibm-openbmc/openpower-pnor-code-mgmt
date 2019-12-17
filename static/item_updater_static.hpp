@@ -54,6 +54,8 @@ class ItemUpdaterStatic : public ItemUpdater
 
     bool isVersionFunctional(const std::string& versionId) override;
 
+    void createHostFwPartition() override;
+
   private:
     /** @brief Create Activation object */
     std::unique_ptr<Activation> createActivationObject(
