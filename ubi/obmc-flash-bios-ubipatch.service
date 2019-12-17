@@ -9,6 +9,8 @@ After=org.open_power.Software.Host.Updater.service
 Type=oneshot
 RemainAfterExit=no
 ExecStart=/usr/bin/obmc-flash-bios ubimount pnor-patch
+ExecStart=/bin/mkdir -p /usr/local/share/host-fw-squashfs
+ExecStart=/usr/bin/obmc-flash-bios hostfwsquashfsmount host-fw
 
 [Install]
 WantedBy=org.open_power.Software.Host.Updater.service
