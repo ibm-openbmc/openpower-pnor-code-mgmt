@@ -356,6 +356,10 @@ void ItemUpdaterStatic::updateFunctionalAssociation(
     ItemUpdater::updateFunctionalAssociation(versionId);
 }
 
+void ItemUpdaterStatic::createHostFwPartition()
+{
+}
+
 void GardResetStatic::reset()
 {
     // Clear gard partition
