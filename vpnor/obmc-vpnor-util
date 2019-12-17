@@ -45,7 +45,9 @@ update_symlinks() {
       # since dual version support is not yet supported.
       rwId=$(ls -d "${PNOR_RW_COMBINED_PATH}"*)
       rwId=${rwId##*-}
-      id=$(grep version "${PNOR_RO_COMBINED_PATH}/pnor.toc" | sha256sum | cut -b 1-8)
+      # Use the Master Lid List (81e002ff.lid) to calculate the id, it lists the
+      # lids in the image and their CRCs similar to a table of contents.
+      id=$(sha256sum ${PNOR_RO_COMBINED_PATH}/81e002ff.lid | cut -b 1-8)
       if [[ "${rwId}" != "${id}" ]]; then
         rm -rf "${PNOR_RW_COMBINED_PATH}"*
         mkdir -p "${PNOR_RW_COMBINED_PATH}${id}"
