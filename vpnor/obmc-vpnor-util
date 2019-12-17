@@ -42,7 +42,8 @@ update_symlinks() {
       fi
 
       # Create a new rw dir if the code was updated, remove all other rw dirs
-      # since dual version support is not yet supported.
+      # since dual version support is not yet supported. Also remove the patch
+      # directories.
       rwId=$(ls -d "${PNOR_RW_COMBINED_PATH}"*)
       rwId=${rwId##*-}
       # Use the Master Lid List (81e002ff.lid) to calculate the id, it lists the
@@ -50,6 +51,8 @@ update_symlinks() {
       id=$(sha256sum ${PNOR_RO_COMBINED_PATH}/81e002ff.lid | cut -b 1-8)
       if [[ "${rwId}" != "${id}" ]]; then
         rm -rf "${PNOR_RW_COMBINED_PATH}"*
+        rm -rf ${PNOR_PATCH_LOCATION}*
+        obmc-flash-bios hostfwumount host-fw
         mkdir -p "${PNOR_RW_COMBINED_PATH}${id}"
       fi
       mkdir -p "${PNOR_PRSV_COMBINED_PATH}"
