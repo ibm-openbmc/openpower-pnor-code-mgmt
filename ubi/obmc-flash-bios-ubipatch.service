@@ -1,6 +1,7 @@
 [Unit]
 Description=Create a ubi volume for pnor patches
 Before=mboxd.service
+Before=obmc-vpnor-updatesymlinks.service
 Wants=usr-local.mount
 After=usr-local.mount
 After=org.open_power.Software.Host.Updater.service
