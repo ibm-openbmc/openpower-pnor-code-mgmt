@@ -11,6 +11,9 @@ update_symlinks() {
   PNOR_RO_COMBINED_PATH="/usr/share/host-fw"
   PNOR_RW_COMBINED_PATH="/var/lib/host-fw/rw-"
   PNOR_PRSV_COMBINED_PATH="/var/lib/host-fw/prsv"
+  PNOR_RO_MMC_PATH="/host-fw/ro"
+  PNOR_RW_MMC_PATH="/host-fw/rw"
+  PNOR_PRSV_MMC_PATH="/host-fw/prsv"
   PERSISTENCE_PATH="/var/lib/obmc/openpower-pnor-code-mgmt/"
   PNOR_PATCH_LOCATION="/usr/local/share/pnor/"
 
@@ -35,11 +38,20 @@ update_symlinks() {
     fi
   done
 
-  # Check for a combined image if no active version found
-  if [ -z $currentVersion ]; then
-      if [ ! -d "${PNOR_RO_COMBINED_PATH}" ]; then
-          return 0;
-      fi
+  if [ ! -z $currentVersion ]; then
+      # Use active version
+      roTarget="${PNOR_RO_PREFIX}${currentVersion}"
+      rwTarget="${PNOR_RW_PREFIX}${currentVersion}"
+      prsvTarget="${PNOR_PRSV}"
+
+  elif [ -d "${PNOR_RO_MMC_PATH}" ]; then
+      # Use MMC
+      roTarget="${PNOR_RO_MMC_PATH}"
+      rwTarget="${PNOR_RW_MMC_PATH}"
+      prsvTarget="${PNOR_PRSV_MMC_PATH}"
+
+  elif [ -d "${PNOR_RO_COMBINED_PATH}" ]; then
+      # Use combined image
 
       # Create a new rw dir if the code was updated, remove all other rw dirs
       # since dual version support is not yet supported. Also remove the patch
@@ -59,10 +71,9 @@ update_symlinks() {
       roTarget="${PNOR_RO_COMBINED_PATH}"
       rwTarget="${PNOR_RW_COMBINED_PATH}${id}"
       prsvTarget="${PNOR_PRSV_COMBINED_PATH}"
+
   else
-      roTarget="${PNOR_RO_PREFIX}${currentVersion}"
-      rwTarget="${PNOR_RW_PREFIX}${currentVersion}"
-      prsvTarget="${PNOR_PRSV}"
+      return 0;
   fi
 
   if [ ! -d "${PNOR_ACTIVE_PATH}" ]; then
