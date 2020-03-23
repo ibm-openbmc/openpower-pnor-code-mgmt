@@ -1,0 +1,9 @@
+[Unit]
+Description=Update host-fw %I
+
+[Service]
+Type=oneshot
+RemainAfterExit=no
+ExecStart=/bin/rm -rf /host-fw/rw/
+ExecStart=/bin/mkdir -p /host-fw/ro /host-fw/rw /host-fw/prsv
+ExecStart=/usr/sbin/unsquashfs -f -d /host-fw/ro %I
