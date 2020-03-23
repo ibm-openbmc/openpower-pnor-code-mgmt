@@ -1,0 +1,8 @@
+openpower_update_manager_SOURCES += \
+	%reldir%/activation_mmc.cpp \
+	%reldir%/item_updater_mmc.cpp
+
+if HAVE_SYSTEMD
+systemdsystemunit_DATA += \
+    %reldir%/openpower-host-fw-update@.service
+endif

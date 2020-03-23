@@ -4,7 +4,11 @@
 #include "ubi/host_fw_watch.hpp"
 #include "ubi/item_updater_ubi.hpp"
 #include "ubi/watch.hpp"
-#else
+#endif
+#ifdef MMC_LAYOUT
+#include "mmc/item_updater_mmc.hpp"
+#endif
+#ifdef STATIC_LAYOUT
 #include "static/item_updater_static.hpp"
 #endif
 
@@ -33,7 +37,11 @@ int main(int argc, char* argv[])
 
 #ifdef UBIFS_LAYOUT
     ItemUpdaterUbi updater(bus, SOFTWARE_OBJPATH);
-#else
+#endif
+#ifdef MMC_LAYOUT
+    ItemUpdaterMmc updater(bus, SOFTWARE_OBJPATH);
+#endif
+#ifdef STATIC_LAYOUT
     ItemUpdaterStatic updater(bus, SOFTWARE_OBJPATH);
 #endif
 
