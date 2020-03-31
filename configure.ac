@@ -171,20 +171,21 @@ AC_DEFINE(HOST_FW_SQUASHFS_PATH, "/usr/local/share/host-fw-squashfs",
     [Path to host-fw patches])
 
 # Setup ubifs layout support
-# For now make it default enabled
 AC_ARG_ENABLE([ubifs_layout],
-    AS_HELP_STRING([--disable-ubifs_layout], [Disable ubifs support.]))
+    AS_HELP_STRING([--enable-ubifs_layout], [Enable ubifs support.]))
+AS_IF([test "x$enable_ubifs_layout" == "xyes"], \
+    [AC_DEFINE([UBIFS_LAYOUT],[],[Enable ubifs support.])])
+AM_CONDITIONAL([UBIFS_LAYOUT], [test "x$enable_ubifs_layout" == "xyes"])
 
+# Setup MMC support
 AC_ARG_ENABLE([mmc_layout],
     AS_HELP_STRING([--enable-mmc_layout], [Enable MMC support.]))
-
-AS_IF([test "x$enable_ubifs_layout" != "xno" -a "x$enable_mmc_layout" != "xyes"], \
-    [AC_DEFINE([UBIFS_LAYOUT],[],[Enable ubifs support.])])
 AS_IF([test "x$enable_mmc_layout" == "xyes"], \
     [AC_DEFINE([MMC_LAYOUT],[],[Enable MMC support.])])
-
-AM_CONDITIONAL([UBIFS_LAYOUT], [test "x$enable_ubifs_layout" != "xno" -a test "x$enable_mmc_layout" != "xyes"])
 AM_CONDITIONAL([MMC_LAYOUT], [test "x$enable_mmc_layout" == "xyes"])
+
+AS_IF([test "x$enable_ubifs_layout" != "xyes" -a "x$enable_mmc_layout" != "xyes"], \
+    [AC_DEFINE([STATIC_LAYOUT],[],[Enable static layout support.])])
 AM_CONDITIONAL([STATIC_LAYOUT], [test "x$enable_ubifs_layout" != "xyes" -a "x$enable_mmc_layout" != "xyes"])
 
 AC_ARG_VAR(ACTIVE_PNOR_MAX_ALLOWED, [The maximum allowed active pnor versions])
