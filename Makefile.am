@@ -23,7 +23,11 @@ endif
 
 if UBIFS_LAYOUT
 include ubi/Makefile.am.include
-else
+endif
+if MMC_LAYOUT
+include mmc/Makefile.am.include
+endif
+if STATIC_LAYOUT
 include static/Makefile.am.include
 if HAVE_SYSTEMD
   systemdsystemunit_DATA += \
