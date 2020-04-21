@@ -1,0 +1,11 @@
+[Unit]
+Description=Mount the host-fw partition to /usr/share/host-fw/
+Before=org.open_power.Software.Host.Updater.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=no
+ExecStart=/usr/bin/obmc-vpnor-util mounthostfw
+
+[Install]
+WantedBy=multi-user.target
