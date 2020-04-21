@@ -99,9 +99,30 @@ update_symlinks() {
   fi
 }
 
+mount_host_fw() {
+    # The current eMMC image ends at offset 5377099264. This is where the host
+    # partition is appended to.
+    partitionOffset=5377099264
+    mmcDev="/dev/mmcblk0"
+
+    # An ext4 filesystem has a magic number 0x53 0xef at offset 1080 and 1081
+    # respectively. Check if a host partition is present.
+    magicOffset=5377100344
+    magic="$(hexdump -C "${mmcDev}" -n 2 -s ${magicOffset})"
+    if [[ ! "${magic}" =~ "53 ef" ]]; then
+        return 0;
+    fi
+
+    mountTarget="/usr/share/host-fw/"
+    mount -o ro,offset=${partitionOffset} "${mmcDev}" "${mountTarget}"
+}
+
 case "$1" in
   updatesymlinks)
     update_symlinks
+    ;;
+  mounthostfw)
+    mount_host_fw
     ;;
   *)
     echo "Invalid argument"
