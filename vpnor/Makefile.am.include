@@ -3,5 +3,6 @@ dist_bin_SCRIPTS += \
 
 if HAVE_SYSTEMD
 systemdsystemunit_DATA += \
+	%reldir%/obmc-vpnor-mounthostfw.service \
 	%reldir%/obmc-vpnor-updatesymlinks.service
 endif
