@@ -100,18 +100,32 @@ update_symlinks() {
 }
 
 mount_host_fw() {
-    # The current eMMC image ends at offset 5377099264. This is where the host
-    # partition is appended to.
-    partitionOffset=5377099264
-    mmcDev="/dev/mmcblk0"
+    # The current eMMC image ends at offset 5377099264 (0x140800600) or after.
+    # The hostfw partition is appended at the end, try to find it.
+    endOfFile=5377099264
 
     # An ext4 filesystem has a magic number 0x53 0xef at offset 1080 and 1081
-    # respectively. Check if a host partition is present.
-    magicOffset=5377100344
-    magic="$(hexdump -C "${mmcDev}" -n 2 -s ${magicOffset})"
-    if [[ ! "${magic}" =~ "53 ef" ]]; then
-        return 0;
+    # respectively. Check if it exists within 1MB (1048576 bytes). Ex output:
+    # 140800e30  76 e9 e8 5e 00 00 ff ff  53 ef 01 00 01 00 00 00
+    # Busybox truncates the printed offset to 8 digits so the actual output is:
+    # 40800e30  76 e9 e8 5e 00 00 ff ff  53 ef 01 00 01 00 00 00
+    mmcDev="/dev/mmcblk0"
+    magicOffset=$(hexdump -C "${mmcDev}" -s $endOfFile -n 1048576 | grep "  53 ef")
+    if [ -z "$magicOffset" ]; then
+        return 0
     fi
+
+    # Get the offset, this is in hex so prepend a '0x'. Ex: 0x40800a30
+    magicOffset="0x${magicOffset%% *}"
+
+    # Add the leading 1 digit back that busybox truncated (this converts the
+    # output to decimal too). Ex: 0x140800a30 = 5377101360
+    magicOffset=$(( magicOffset | 0x100000000 ))
+
+    # The magic number is 8bytes from the beginning of the line, so substract
+    # 1072 to get to the beginning of the partition since the magic number is
+    # at location 1080.
+    partitionOffset=$(( $magicOffset - 1072 ))
 
     mountTarget="/usr/share/host-fw/"
     mount -o ro,offset=${partitionOffset} "${mmcDev}" "${mountTarget}"
