@@ -232,11 +232,17 @@ void ItemUpdaterUbi::reset()
         }
     }
 
-    // Clear the preserved partition.
+    // Clear the preserved partition, except for SECBOOT that contains keys
+    // provisioned for the system.
     if (fs::is_directory(PNOR_PRSV))
     {
         for (const auto& iter : fs::directory_iterator(PNOR_PRSV))
         {
+            auto secbootPartition = "SECBOOT";
+            if (iter.path().stem() == secbootPartition)
+            {
+                continue;
+            }
             fs::remove_all(iter);
         }
     }
