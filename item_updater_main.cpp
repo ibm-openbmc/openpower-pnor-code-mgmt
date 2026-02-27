@@ -72,12 +72,16 @@ int main(int argc, char* argv[])
         {"com.ibm.Hardware.Chassis.Model.Bonnell"s, {".BONNELL_XML"s, ".P10"s}},
         {"com.ibm.Hardware.Chassis.Model.Everest"s, {".EVEREST_XML"s, ".P10"s}},
         {"com.ibm.Hardware.Chassis.Model.Fuji"s, {".FUJI_XML"s, ".P10"s}},
+        {"com.ibm.Hardware.Chassis.Model.Huygens"s,
+         {".RAINIER_2U_XML"s, ".P10"s}},
         {"com.ibm.Hardware.Chassis.Model.Rainier2U"s,
          {".RAINIER_2U_XML"s, ".P10"s}},
         {"com.ibm.Hardware.Chassis.Model.Rainier4U"s,
          {".RAINIER_4U_XML"s, ".P10"s}},
         {"com.ibm.Hardware.Chassis.Model.Rainier1S4U"s,
          {".RAINIER_4U_XML"s, ".P10"s}},
+        {"com.ibm.Hardware.Chassis.Model.RBMCPrototype"s,
+         {".RAINIER_2U_XML"s, ".P10"s}},
     }};
 
     // subcommandContext allows program subcommand callbacks to add loop event
