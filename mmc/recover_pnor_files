@@ -13,14 +13,30 @@ if [ -f "${ro_dir}/81e00994.lid" ]; then
         eachFile=$(echo "${eachFile}" | cut -d "," -f 1)
         #check if it is a symbolic link
         if [ -L "${running_dir}/${eachFile}" ]; then
+            # Save the symlink name to check if it's a devtree
+            symlinkName="${eachFile}"
             # get the symlink target file
             eachFile="$(readlink "${running_dir}/${eachFile}")"
             if [ -f "${running_dir}/${eachFile}" ] && [ -f "${ro_dir}/${eachFile}" ]; then
                 runsize="$(stat -c '%s' "${running_dir}/${eachFile}")"
                 rosize="$(stat -c '%s' "${ro_dir}/${eachFile}")"
+
+                # Check if this is a device tree file (based on symlink name) and validate it
+                is_corrupted=0
+                if echo "${symlinkName}" | grep -qi "devtree"; then
+                    # Validate device tree structure using validate_dtb from pdbg
+                    # Only validate if validate_dtb is available
+                    if [ -x /usr/bin/validate_dtb ]; then
+                        if ! /usr/bin/validate_dtb "${running_dir}/${eachFile}" > /dev/null 2>&1; then
+                            echo "Device tree validation failed for ${eachFile}, marking for recovery"
+                            is_corrupted=1
+                        fi
+                    fi
+                fi
+
                 # Partition size may have changed or became corrupted
                 # restoring the file from the readonly copy
-                if [ "$runsize" != "$rosize" ]; then
+                if [ "$runsize" != "$rosize" ] || [ "$is_corrupted" -eq 1 ]; then
                     cp -p ${ro_dir}/"${eachFile}" ${running_dir}/"${eachFile}"
                     # Log PEL to indicate such
                     busctl call xyz.openbmc_project.Logging \
@@ -44,3 +60,4 @@ if [ -f "${ro_dir}/81e00994.lid" ]; then
             CreateDump "a{sv}" 0
     fi
 fi
+
