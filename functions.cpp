@@ -288,6 +288,15 @@ std::string getBiosAttrStr(const std::filesystem::path& elementsJsonFilePath,
         constexpr auto iplExtension = ".iplTime";
         constexpr auto runtimeSuffix = "_RT";
         std::filesystem::path path(name);
+        
+        // Process elements that have no extensions.
+        if (path.extension().empty())
+        {
+            auto keyName = path.filename();
+            attr.insert({keyName, lid});
+            continue;
+        }
+
         if (path.extension() == iplExtension)
         {
             // Some elements have an additional extension, ex: .P10.iplTime
@@ -339,13 +348,6 @@ std::string getBiosAttrStr(const std::filesystem::path& elementsJsonFilePath,
             {
                 attr.insert({path.stem(), lid});
             }
-        }
-
-        // Process elements that have no extensions.
-        if (path.extension().empty())
-        {
-            auto keyName = path.filename();
-            attr.insert({keyName, lid});
         }
     }
     for (const auto& a : attr)
