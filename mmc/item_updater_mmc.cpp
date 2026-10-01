@@ -101,7 +101,7 @@ void ItemUpdaterMMC::reset()
     // Recreate default files.
     // std::tuple<method, service_name>
     const std::tuple<std::string, std::string> services[] = {
-        {"StartUnit", "obmc-flash-bios-init.service"},
+        {"RestartUnit", "obmc-flash-bios-init.service"},
         {"StartUnit", "obmc-flash-bios-patch.service"},
         {"StartUnit", "openpower-process-host-firmware.service"},
         {"StartUnit", "openpower-update-bios-attr-table.service"},

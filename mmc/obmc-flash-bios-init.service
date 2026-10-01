@@ -7,7 +7,7 @@ After=xyz.openbmc_project.Software.Manager.service
 
 [Service]
 Type=oneshot
-RemainAfterExit=no
+RemainAfterExit=yes
 ExecStart=/usr/bin/obmc-flash-bios mmc-init
 
 [Install]
